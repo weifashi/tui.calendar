@@ -211,6 +211,24 @@ function Schedule() {
     this.state = '';
 
     /**
+     * 优先级
+     * @type {string}
+     */
+    this.priority = '';
+
+    /**
+     * 阻止点击详情窗口的 编辑、删除
+     * @type {boolean}
+     */
+    this.preventClick = false;
+
+    /**
+     * 是否已选
+     * @type {boolean}
+     */
+    this.isChecked = false;
+
+    /**
      * travelTime: going-Duration minutes
      * @type {number}
      */
@@ -291,6 +309,9 @@ Schedule.prototype.init = function(options) {
     this.goingDuration = options.goingDuration || 0;
     this.comingDuration = options.comingDuration || 0;
     this.state = options.state || '';
+    this.priority = options.priority || '';
+    this.preventClick = options.preventClick || false;
+    this.isChecked = options.isChecked || false;
 
     if (this.isAllDay) {
         this.setAllDayPeriod(options.start, options.end);

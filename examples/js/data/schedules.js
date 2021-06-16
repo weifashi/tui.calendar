@@ -121,6 +121,9 @@ function generateRandomSchedule(calendar, renderStart, renderEnd) {
     schedule.attendees = chance.bool({likelihood: 70}) ? generateNames() : [];
     schedule.recurrenceRule = chance.bool({likelihood: 20}) ? 'repeated events' : '';
     schedule.state = chance.bool({likelihood: 20}) ? 'Free' : 'Busy';
+    schedule.priority = 'Priority';
+    schedule.isComplete = true;
+    schedule.preventClick = true;
     schedule.color = calendar.color;
     schedule.bgColor = calendar.bgColor;
     schedule.dragBgColor = calendar.dragBgColor;

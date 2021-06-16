@@ -90,7 +90,7 @@ module.exports = function(baseController, layoutContainer, dragHandler, options,
         vpanels = [];
     var weekView, dayNameContainer, dayNameView, vLayoutContainer, vLayout;
     var createView, onSaveNewSchedule, onSetCalendars, lastVPanel;
-    var detailView, onShowDetailPopup, onDeleteSchedule, onShowEditPopup, onEditSchedule;
+    var detailView, onShowDetailPopup, onDeleteSchedule, onClickSchedule, onShowEditPopup, onEditSchedule;
     var taskView = options.taskView;
     var scheduleView = options.scheduleView;
     var viewVisibilities = {
@@ -278,6 +278,13 @@ module.exports = function(baseController, layoutContainer, dragHandler, options,
                 weekView.handler.creation.time.fire('beforeDeleteSchedule', eventData);
             }
         };
+        onClickSchedule = function(eventData) {
+            if (eventData.isAllDay) {
+                weekView.handler.creation.allday.fire('beforeClickSchedule', eventData);
+            } else {
+                weekView.handler.creation.time.fire('beforeClickSchedule', eventData);
+            }
+        };
         onEditSchedule = function(eventData) {
             if (eventData.isAllDay) {
                 weekView.handler.move.allday.fire('beforeUpdateSchedule', eventData);
@@ -302,6 +309,7 @@ module.exports = function(baseController, layoutContainer, dragHandler, options,
             detailView.on('beforeUpdateSchedule', onEditSchedule);
         }
         detailView.on('beforeDeleteSchedule', onDeleteSchedule);
+        detailView.on('beforeClickSchedule', onClickSchedule);
     }
 
     weekView.on('afterRender', function() {

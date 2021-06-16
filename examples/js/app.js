@@ -61,6 +61,9 @@
             console.log('beforeDeleteSchedule', e);
             cal.deleteSchedule(e.schedule.id, e.schedule.calendarId);
         },
+        'beforeClickSchedule': function(e) {
+            console.log('beforeClickSchedule', e);
+        },
         'afterRenderSchedule': function(e) {
             var schedule = e.schedule;
             // var element = cal.getElement(schedule.id, schedule.calendarId);

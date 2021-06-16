@@ -79,6 +79,8 @@ ScheduleDetailPopup.prototype._onClick = function(clickEvent) {
     this._onClickEditSchedule(target);
 
     this._onClickDeleteSchedule(target);
+
+    this._onClickClickSchedule(target);
 };
 
 /**
@@ -89,25 +91,54 @@ ScheduleDetailPopup.prototype._onClickEditSchedule = function(target) {
     var className = config.classname('popup-edit');
 
     if (domutil.hasClass(target, className) || domutil.closest(target, '.' + className)) {
-        this.fire('beforeUpdateSchedule', {
-            schedule: this._schedule,
-            triggerEventName: 'click',
-            target: this._scheduleEl
+        this.fire('beforeClickSchedule', {
+            type: 'edit',
+            schedule: this._schedule
         });
+        if (this._schedule.preventClick !== true) {
+            this.fire('beforeUpdateSchedule', {
+                schedule: this._schedule,
+                triggerEventName: 'click',
+                target: this._scheduleEl
+            });
+        }
 
         this.hide();
     }
 };
 
 /**
- * @fires ScheduleDetailPopup#clickEditSchedule
+ * @fires ScheduleDetailPopup#clickDeleteSchedule
  * @param {HTMLElement} target - event target
  */
 ScheduleDetailPopup.prototype._onClickDeleteSchedule = function(target) {
     var className = config.classname('popup-delete');
 
     if (domutil.hasClass(target, className) || domutil.closest(target, '.' + className)) {
-        this.fire('beforeDeleteSchedule', {
+        this.fire('beforeClickSchedule', {
+            type: 'delete',
+            schedule: this._schedule
+        });
+        if (this._schedule.preventClick !== true) {
+            this.fire('beforeDeleteSchedule', {
+                schedule: this._schedule
+            });
+        }
+
+        this.hide();
+    }
+};
+
+/**
+ * @fires ScheduleDetailPopup#clickClickSchedule
+ * @param {HTMLElement} target - event target
+ */
+ScheduleDetailPopup.prototype._onClickClickSchedule = function(target) {
+    var className = config.classname('schedule-checkbox');
+
+    if (domutil.hasClass(target, className) || domutil.closest(target, '.' + className)) {
+        this.fire('beforeClickSchedule', {
+            type: 'check',
             schedule: this._schedule
         });
 

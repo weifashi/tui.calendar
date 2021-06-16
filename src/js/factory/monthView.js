@@ -53,7 +53,7 @@ function createMonthView(baseController, layoutContainer, dragHandler, options) 
     var monthViewContainer, monthView, moreView, createView;
     var clickHandler, creationHandler, resizeHandler, moveHandler, clearSchedulesHandler, onUpdateSchedule;
     var onShowCreationPopup, onSaveNewSchedule, onShowEditPopup;
-    var detailView, onShowDetailPopup, onDeleteSchedule, onEditSchedule;
+    var detailView, onShowDetailPopup, onDeleteSchedule, onClickSchedule, onEditSchedule;
 
     monthViewContainer = domutil.appendHTMLElement(
         'div', layoutContainer, config.classname('month'));
@@ -145,6 +145,11 @@ function createMonthView(baseController, layoutContainer, dragHandler, options) 
                 creationHandler.fire('beforeDeleteSchedule', eventData);
             }
         };
+        onClickSchedule = function(eventData) {
+            if (creationHandler) {
+                creationHandler.fire('beforeClickSchedule', eventData);
+            }
+        };
         onEditSchedule = function(eventData) {
             moveHandler.fire('beforeUpdateSchedule', eventData);
         };
@@ -152,6 +157,8 @@ function createMonthView(baseController, layoutContainer, dragHandler, options) 
         clickHandler.on('clickSchedule', onShowDetailPopup);
 
         detailView.on('beforeDeleteSchedule', onDeleteSchedule);
+
+        detailView.on('beforeClickSchedule', onClickSchedule);
 
         if (options.useCreationPopup) {
             onShowEditPopup = function(eventData) {
@@ -225,6 +232,7 @@ function createMonthView(baseController, layoutContainer, dragHandler, options) 
             clickHandler.off('clickSchedule', onShowDetailPopup);
             detailView.off('beforeUpdateSchedule', onUpdateSchedule);
             detailView.off('beforeDeleteSchedule', onDeleteSchedule);
+            detailView.off('beforeClickSchedule', onClickSchedule);
             detailView.destroy();
         }
     };

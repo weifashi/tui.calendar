@@ -443,6 +443,9 @@ var helpers = {
     'popupDetailState-tmpl': function(schedule) {
         return schedule.state || 'Busy';
     },
+    'popupDetailPriority-tmpl': function(schedule) {
+        return schedule.priority;
+    },
     'popupDetailRepeat-tmpl': function(schedule) {
         return schedule.recurrenceRule;
     },

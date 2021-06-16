@@ -1,17 +1,25 @@
-<div class="{{CSS_PREFIX}}popup {{CSS_PREFIX}}popup-detail">
+<div class="{{CSS_PREFIX}}popup {{CSS_PREFIX}}popup-detail {{CSS_PREFIX}}popup-task">
   <div class="{{CSS_PREFIX}}popup-container">
     <div class="{{CSS_PREFIX}}popup-section {{CSS_PREFIX}}section-header">
+      {{#if schedule.isChecked}}
+      <span class="{{CSS_PREFIX}}schedule-checkbox {{CSS_PREFIX}}icon {{CSS_PREFIX}}ic-checkbox-checked"></span>
+      {{else}}
+      <span class="{{CSS_PREFIX}}schedule-checkbox {{CSS_PREFIX}}icon {{CSS_PREFIX}}ic-checkbox"></span>
+      {{/if}}
       <div>
-        <span class="{{CSS_PREFIX}}schedule-private {{CSS_PREFIX}}icon {{CSS_PREFIX}}ic-private"></span>
-        <span class="{{CSS_PREFIX}}schedule-title">{{schedule.title}}</span>
+        <div>
+          <span class="{{CSS_PREFIX}}schedule-private {{CSS_PREFIX}}icon {{CSS_PREFIX}}ic-private"></span>
+          <span class="{{CSS_PREFIX}}schedule-title">{{schedule.title}}</span>
+        </div>
+        <div class="{{CSS_PREFIX}}popup-detail-date {{CSS_PREFIX}}content">{{{popupDetailDate-tmpl schedule.isAllDay schedule.start schedule.end}}}</div>
       </div>
-      <div class="{{CSS_PREFIX}}popup-detail-date {{CSS_PREFIX}}content">{{{popupDetailDate-tmpl schedule.isAllDay schedule.start schedule.end}}}</div>
     </div>
     <div class="{{CSS_PREFIX}}section-detail">
         {{#if schedule.location}}<div class="{{CSS_PREFIX}}popup-detail-item"><span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}ic-location-b"></span><span class="{{CSS_PREFIX}}content">{{{popupDetailLocation-tmpl schedule}}}</span></div>{{/if}}
         {{#if schedule.recurrenceRule}}<div class="{{CSS_PREFIX}}popup-detail-item"><span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}ic-repeat-b"></span><span class="{{CSS_PREFIX}}content">{{{popupDetailRepeat-tmpl schedule}}}</span></div>{{/if}}
         {{#if schedule.attendees}}<div class="{{CSS_PREFIX}}popup-detail-item {{CSS_PREFIX}}popup-detail-item-indent"><span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}ic-user-b"></span><span class="{{CSS_PREFIX}}content">{{{popupDetailUser-tmpl schedule}}}</span></div>{{/if}}
         {{#if schedule.state}}<div class="{{CSS_PREFIX}}popup-detail-item"><span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}ic-state-b"></span><span class="{{CSS_PREFIX}}content">{{{popupDetailState-tmpl schedule}}}</span></div>{{/if}}
+        {{#if schedule.priority}}<div class="{{CSS_PREFIX}}popup-detail-item"><span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}ic-priority"></span><span class="{{CSS_PREFIX}}content">{{{popupDetailPriority-tmpl schedule}}}</span></div>{{/if}}
         {{#if calendar}}
         <div class="{{CSS_PREFIX}}popup-detail-item"><span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}calendar-dot" style="background-color: {{schedule.bgColor}}"></span><span class="{{CSS_PREFIX}}content">{{calendar.name}}</span></div>
         {{/if}}

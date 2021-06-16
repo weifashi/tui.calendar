@@ -1524,6 +1524,26 @@ Calendar.prototype._onBeforeDelete = function(deleteScheduleData) {
 };
 
 /**
+ * @fires Calendar#beforeClickSchedule
+ * @param {object} clickScheduleData - click schedule data
+ * @private
+ */
+Calendar.prototype._onBeforeClick = function(clickScheduleData) {
+    /**
+     * Fire this event when click a schedule.
+     * @event Calendar#beforeClickSchedule
+     * @type {object}
+     * @property {Schedule} schedule - The {@link Schedule} instance to click
+     * @example
+     * calendar.on('beforeClickSchedule', function(event) {
+     *     var schedule = event.schedule;
+     *     alert('The schedule is removed.', schedule);
+     * });
+     */
+    this.fire('beforeClickSchedule', clickScheduleData);
+};
+
+/**
  * @fires Calendar#afterRenderSchedule
  * @param {Schedule} scheduleData - The schedule data
  * @private
@@ -1586,6 +1606,7 @@ Calendar.prototype._toggleViewSchedule = function(isAttach, view) {
     util.forEach(handler.creation, function(creationHandler) {
         creationHandler[method]('beforeCreateSchedule', self._onBeforeCreate, self);
         creationHandler[method]('beforeDeleteSchedule', self._onBeforeDelete, self);
+        creationHandler[method]('beforeClickSchedule', self._onBeforeClick, self);
     });
 
     util.forEach(handler.move, function(moveHandler) {
