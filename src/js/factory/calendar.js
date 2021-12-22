@@ -19,6 +19,7 @@ var tz = require('../common/timezone');
 var TZDate = tz.Date;
 var config = require('../config');
 var reqAnimFrame = require('../common/reqAnimFrame');
+var sanitizer = require('../common/sanitizer');
 
 var mmin = Math.min;
 
@@ -678,6 +679,7 @@ function Calendar(container, options) {
  * destroy calendar instance.
  */
 Calendar.prototype.destroy = function() {
+    sanitizer.removeAttributeHooks();
     this._dragHandler.destroy();
     this._controller.off();
     this._layout.clear();
@@ -762,6 +764,8 @@ Calendar.prototype._initialize = function(options) {
     this._setAdditionalInternalOptions(this._options);
 
     this.changeView(viewName, true);
+
+    sanitizer.addAttributeHooks();
 };
 
 /**
@@ -774,11 +778,18 @@ Calendar.prototype._initialize = function(options) {
  */
 Calendar.prototype._setAdditionalInternalOptions = function(options) {
     var timezone = options.timezone;
+    var templateWithSanitizer = function(templateFn) {
+        return function() {
+            var template = templateFn.apply(null, arguments);
+
+            return sanitizer.sanitize(template);
+        };
+    };
     var zones, offsetCalculator;
 
     util.forEach(options.template, function(func, name) {
         if (func) {
-            Handlebars.registerHelper(name + '-tmpl', func);
+            Handlebars.registerHelper(name + '-tmpl', templateWithSanitizer(func));
         }
     });
 

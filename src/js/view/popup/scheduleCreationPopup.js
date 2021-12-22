@@ -51,6 +51,11 @@ function ScheduleCreationPopup(container, calendars, usageStatistics) {
         this._toggleIsPrivate.bind(this),
         this._onClickSaveSchedule.bind(this)
     ];
+    this._datepickerState = {
+        start: null,
+        end: null,
+        isAllDay: false
+    };
 
     domevent.on(container, 'click', this._onClick, this);
 }
@@ -79,6 +84,10 @@ ScheduleCreationPopup.prototype._onMouseDown = function(mouseDownEvent) {
 ScheduleCreationPopup.prototype.destroy = function() {
     this.layer.destroy();
     this.layer = null;
+    if (this.rangePicker) {
+        this.rangePicker.destroy();
+        this.rangePicker = null;
+    }
     domevent.off(this.container, 'click', this._onClick, this);
     domevent.off(document.body, 'mousedown', this._onMouseDown, this);
     View.prototype.destroy.call(this);
@@ -183,7 +192,7 @@ ScheduleCreationPopup.prototype._selectDropdownMenuItem = function(target) {
     if (domutil.hasClass(dropdown, config.classname('section-calendar'))) {
         domutil.find('.' + iconClassName, dropdownBtn).style.backgroundColor = bgColor;
         this._selectedCal = common.find(this.calendars, function(cal) {
-            return cal.id === domutil.getData(selectedItem, 'calendarId');
+            return String(cal.id) === domutil.getData(selectedItem, 'calendarId');
         });
     }
 
@@ -205,6 +214,11 @@ ScheduleCreationPopup.prototype._toggleIsAllday = function(target) {
     if (alldaySection) {
         checkbox = domutil.find(config.classname('.checkbox-square'), alldaySection);
         checkbox.checked = !checkbox.checked;
+
+        this.rangePicker.destroy();
+        this.rangePicker = null;
+        this._setDatepickerState({isAllDay: checkbox.checked});
+        this._createDatepicker();
 
         return true;
     }
@@ -300,8 +314,7 @@ ScheduleCreationPopup.prototype._onClickSaveSchedule = function(target) {
 ScheduleCreationPopup.prototype.render = function(viewModel) {
     var calendars = this.calendars;
     var layer = this.layer;
-    var self = this;
-    var boxElement, guideElements;
+    var boxElement, guideElements, defaultStartDate, defaultEndDate;
 
     viewModel.zIndex = this.layer.zIndex + 5;
     viewModel.calendars = calendars;
@@ -319,7 +332,22 @@ ScheduleCreationPopup.prototype.render = function(viewModel) {
         boxElement = guideElements.length ? guideElements[0] : null;
     }
     layer.setContent(tmpl(viewModel));
-    this._createDatepicker(viewModel.start, viewModel.end, viewModel.isAllDay);
+
+    defaultStartDate = new TZDate(viewModel.start);
+    defaultEndDate = new TZDate(viewModel.end);
+    // NOTE: Setting default start/end time when editing all-day schedule first time.
+    // This logic refers to Apple calendar's behavior.
+    if (viewModel.isAllDay) {
+        defaultStartDate.setHours(12, 0, 0);
+        defaultEndDate.setHours(13, 0, 0);
+    }
+    this._setDatepickerState({
+        start: defaultStartDate,
+        end: defaultEndDate,
+        isAllDay: viewModel.isAllDay
+    });
+    this._createDatepicker();
+
     layer.show();
 
     if (boxElement) {
@@ -327,8 +355,8 @@ ScheduleCreationPopup.prototype.render = function(viewModel) {
     }
 
     util.debounce(function() {
-        domevent.on(document.body, 'mousedown', self._onMouseDown, self);
-    })();
+        domevent.on(document.body, 'mousedown', this._onMouseDown, this);
+    }.bind(this))();
 };
 
 /**
@@ -339,12 +367,11 @@ ScheduleCreationPopup.prototype.render = function(viewModel) {
 ScheduleCreationPopup.prototype._makeEditModeData = function(viewModel) {
     var schedule = viewModel.schedule;
     var title, isPrivate, location, startDate, endDate, isAllDay, state;
-    var raw = schedule.raw || {};
     var calendars = this.calendars;
 
     var id = schedule.id;
     title = schedule.title;
-    isPrivate = raw['class'] === 'private';
+    isPrivate = schedule.isPrivate;
     location = schedule.location;
     startDate = schedule.start;
     endDate = schedule.end;
@@ -368,16 +395,17 @@ ScheduleCreationPopup.prototype._makeEditModeData = function(viewModel) {
         state: state,
         start: startDate,
         end: endDate,
-        raw: {
-            class: isPrivate ? 'private' : 'public'
-        },
         zIndex: this.layer.zIndex + 5,
         isEditMode: this._isEditMode
     };
 };
 
+ScheduleCreationPopup.prototype._setDatepickerState = function(newState) {
+    util.extend(this._datepickerState, newState);
+};
+
 /**
- * Set popup position and arrow direction to apear near guide element
+ * Set popup position and arrow direction to appear near guide element
  * @param {MonthCreationGuide|TimeCreationGuide|DayGridCreationGuide} guideBound - creation guide element
  */
 ScheduleCreationPopup.prototype._setPopupPositionAndArrowDirection = function(guideBound) {
@@ -588,12 +616,12 @@ ScheduleCreationPopup.prototype._setArrowDirection = function(arrow) {
 
 /**
  * Create date range picker using start date and end date
- * @param {TZDate} start - start date
- * @param {TZDate} end - end date
- * @param {boolean} isAllDay - isAllDay
  */
-ScheduleCreationPopup.prototype._createDatepicker = function(start, end, isAllDay) {
+ScheduleCreationPopup.prototype._createDatepicker = function() {
     var cssPrefix = config.cssPrefix;
+    var start = this._datepickerState.start;
+    var end = this._datepickerState.end;
+    var isAllDay = this._datepickerState.isAllDay;
 
     this.rangePicker = DatePicker.createRangePicker({
         startpicker: {
@@ -613,6 +641,12 @@ ScheduleCreationPopup.prototype._createDatepicker = function(start, end, isAllDa
         },
         usageStatistics: this._usageStatistics
     });
+    this.rangePicker.on('change:start', function() {
+        this._setDatepickerState({start: this.rangePicker.getStartDate()});
+    }.bind(this));
+    this.rangePicker.on('change:end', function() {
+        this._setDatepickerState({end: this.rangePicker.getEndDate()});
+    }.bind(this));
 };
 
 /**
@@ -620,7 +654,6 @@ ScheduleCreationPopup.prototype._createDatepicker = function(start, end, isAllDa
  */
 ScheduleCreationPopup.prototype.hide = function() {
     this.layer.hide();
-
     if (this.guide) {
         this.guide.clearGuideElement();
         this.guide = null;
@@ -678,7 +711,7 @@ ScheduleCreationPopup.prototype._validateForm = function(title, startDate, endDa
  */
 ScheduleCreationPopup.prototype._getRangeDate = function(startDate, endDate, isAllDay) {
     var start = isAllDay ? datetime.start(startDate) : startDate;
-    var end = isAllDay ? datetime.renderEnd(startDate, endDate) : endDate;
+    var end = isAllDay ? datetime.renderEnd(startDate, datetime.end(endDate)) : endDate;
 
     /**
      * @typedef {object} RangeDate
@@ -708,7 +741,7 @@ ScheduleCreationPopup.prototype._getRangeDate = function(startDate, endDate, isA
 ScheduleCreationPopup.prototype._onClickUpdateSchedule = function(form) {
     var changes = common.getScheduleChanges(
         this._schedule,
-        ['calendarId', 'title', 'location', 'start', 'end', 'isAllDay', 'state'],
+        ['calendarId', 'title', 'location', 'start', 'end', 'isAllDay', 'state', 'isPrivate'],
         {
             calendarId: form.calendarId,
             title: form.title.value,
@@ -716,7 +749,8 @@ ScheduleCreationPopup.prototype._onClickUpdateSchedule = function(form) {
             start: form.start,
             end: form.end,
             isAllDay: form.isAllDay,
-            state: form.state
+            state: form.state,
+            isPrivate: form.isPrivate
         }
     );
 
@@ -726,11 +760,7 @@ ScheduleCreationPopup.prototype._onClickUpdateSchedule = function(form) {
      * @property {Schedule} schedule - schedule object to be updated
      */
     this.fire('beforeUpdateSchedule', {
-        schedule: util.extend({
-            raw: {
-                class: form.isPrivate ? 'private' : 'public'
-            }
-        }, this._schedule),
+        schedule: this._schedule,
         changes: changes,
         start: form.start,
         end: form.end,
@@ -762,9 +792,7 @@ ScheduleCreationPopup.prototype._onClickCreateSchedule = function(form) {
         calendarId: form.calendarId,
         title: form.title.value,
         location: form.location.value,
-        raw: {
-            class: form.isPrivate ? 'private' : 'public'
-        },
+        isPrivate: form.isPrivate,
         start: form.start,
         end: form.end,
         isAllDay: form.isAllDay,

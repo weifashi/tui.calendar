@@ -11,7 +11,25 @@ var datetime = require('../common/datetime');
 var common = require('../common/common');
 var Theme = require('../theme/theme');
 var tz = require('../common/timezone');
+var sanitizer = require('../common/sanitizer');
 var TZDate = tz.Date;
+
+var SCHEDULE_VULNERABLE_OPTIONS = ['title', 'body', 'location', 'state', 'category', 'dueDateClass'];
+
+/**
+ * Sanitize option values having possible vulnerabilities
+ * @param {object} options options.
+ * @returns {object} sanitized options.
+ */
+function sanitizeOptions(options) {
+    util.forEachArray(SCHEDULE_VULNERABLE_OPTIONS, function(prop) {
+        if (options[prop]) {
+            options[prop] = sanitizer.sanitize(options[prop]);
+        }
+    });
+
+    return options;
+}
 
 /**
  * Get range date by custom timezone or native timezone
@@ -158,7 +176,7 @@ Base.prototype._getContainDatesInSchedule = function(schedule) {
 Base.prototype.createSchedule = function(options, silent) {
     var schedule,
         scheduleData = {
-            data: options
+            data: sanitizeOptions(options)
         };
 
     /**
@@ -209,7 +227,7 @@ Base.prototype.updateSchedule = function(schedule, options) {
     var start = options.start || schedule.start;
     var end = options.end || schedule.end;
 
-    options = options || {};
+    options = options ? sanitizeOptions(options) : {};
 
     if (['milestone', 'task', 'allday', 'time'].indexOf(options.category) > -1) {
         schedule.set('category', options.category);
@@ -269,6 +287,10 @@ Base.prototype.updateSchedule = function(schedule, options) {
 
     if (!util.isUndefined(options.isReadOnly)) {
         schedule.set('isReadOnly', options.isReadOnly);
+    }
+
+    if (!util.isUndefined(options.isPrivate)) {
+        schedule.set('isPrivate', options.isPrivate);
     }
 
     if (options.location) {

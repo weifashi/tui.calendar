@@ -240,7 +240,7 @@ ScheduleDetailPopup.prototype._getScheduleModel = function(scheduleViewModel) {
 };
 
 /**
- * Set popup position and arrow direction to apear near guide element
+ * Set popup position and arrow direction to appear near guide element
  * @param {Event} event - creation guide element
  */
 ScheduleDetailPopup.prototype._setPopupPositionAndArrowDirection = function(event) {

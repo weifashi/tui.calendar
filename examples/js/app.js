@@ -221,6 +221,7 @@
             calendarId: calendar.id,
             title: title,
             isAllDay: isAllDay,
+            location: location,
             start: start,
             end: end,
             category: isAllDay ? 'allday' : 'time',
@@ -229,9 +230,6 @@
             bgColor: calendar.bgColor,
             dragBgColor: calendar.bgColor,
             borderColor: calendar.borderColor,
-            raw: {
-                location: location
-            },
             state: 'Busy'
         }]);
 
@@ -283,9 +281,7 @@
             dragBgColor: calendar.bgColor,
             borderColor: calendar.borderColor,
             location: scheduleData.location,
-            raw: {
-                class: scheduleData.raw['class']
-            },
+            isPrivate: scheduleData.isPrivate,
             state: scheduleData.state
         };
         if (calendar) {

@@ -113,7 +113,7 @@ $ bower install tui-calendar#<tag> # Specific version
 ```
 
 ### Via Contents Delivery Network (CDN)
-TOAST UI products are available over the CDN powered by [TOAST Cloud](https://www.toast.com).
+TOAST UI products are available over the CDN powered by [NHN Cloud](https://www.toast.com).
 
 You can use the CDN as below.
 
@@ -255,7 +255,7 @@ Run npm scripts and develop yourself with the following process.
 
 Fork `develop` branch into your personal repository.
 Clone it to local computer. Install node modules.
-Before starting development, you should check to haveany errors.
+Before starting development, you should check if there are any errors.
 
 ``` sh
 $ git clone https://github.com/{owner}/tui.calendar.git
@@ -267,7 +267,7 @@ $ npm run test
 ### Develop
 
 Let's start development!
-You can see your code is reflected as soon as you saving the codes by running a server.
+You can see your code reflected as soon as you save the code by running a server.
 Don't miss adding test cases and then make green rights.
 
 #### Run webpack-dev-server
@@ -284,10 +284,10 @@ $ npm run test
 
 ### Pull Request
 
-Before PR, check to test lastly and then check any errors.
-If it has no error, commit and then push it!
+Before uploading your PR, run test one last time to check if there are any errors. 
+If it has no errors, commit and then push it!
 
-For more information on PR's step, please see links of Contributing section.
+For more information on PR's steps, please see links in the Contributing section.
 
 ## 💬 Contributing
 
@@ -299,8 +299,8 @@ For more information on PR's step, please see links of Contributing section.
 ## 🔩 Dependency
 
 * [tui-code-snippet](https://github.com/nhn/tui.code-snippet) >= 1.5.0
-* [tui-date-picker](https://github.com/nhn/tui.date-picker) >= 4.0.2 is optional.
-* [tui-time-picker](https://github.com/nhn/tui.time-picker) >= 2.0.1 is optional.
+* [tui-date-picker](https://github.com/nhn/tui.date-picker) >= 4.3.0 is optional.
+* [tui-time-picker](https://github.com/nhn/tui.time-picker) >= 2.1.4 is optional.
 
 ## 🍞 TOAST UI Family
 * [TOAST UI Grid](https://github.com/nhn/tui.grid)
@@ -310,7 +310,7 @@ For more information on PR's step, please see links of Contributing section.
 * [TOAST UI Components](https://github.com/nhn?q=tui)
 
 ## 🚀 Used By
-* [TOAST Dooray! - Collaboration Service (Project, Messenger, Mail, Calendar, Drive, Wiki, Contacts)](https://dooray.com)
+* [NHN Dooray! - Collaboration Service (Project, Messenger, Mail, Calendar, Drive, Wiki, Contacts)](https://dooray.com)
 * [NCP - Commerce Platform](https://www.e-ncp.com/)
 * [shopby](https://www.godo.co.kr/shopby/main.gd)
 * [payco-shopping](https://shopping.payco.com/)
