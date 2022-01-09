@@ -135,12 +135,26 @@ ScheduleDetailPopup.prototype._onClickDeleteSchedule = function(target) {
  */
 ScheduleDetailPopup.prototype._onClickClickSchedule = function(target) {
     var className = config.classname('schedule-checkbox');
+    var data = {};
+    var self;
 
     if (domutil.hasClass(target, className) || domutil.closest(target, '.' + className)) {
-        this.fire('beforeClickSchedule', {
+        data = {
             type: 'check',
             schedule: this._schedule
-        });
+        };
+        if (this._schedule.preventCheckHide === true) {
+            self = this;
+            data.target = target;
+            data.hideCall = function() {
+                self.hide();
+            };
+        }
+        this.fire('beforeClickSchedule', data);
+
+        if (this._schedule.preventCheckHide === true) {
+            return;
+        }
 
         this.hide();
     }

@@ -223,6 +223,12 @@ function Schedule() {
     this.preventClick = false;
 
     /**
+     * 阻止点击详情窗口的 选择 后隐藏
+     * @type {boolean}
+     */
+    this.preventCheckHide = false;
+
+    /**
      * 是否已选
      * @type {boolean}
      */
@@ -311,6 +317,7 @@ Schedule.prototype.init = function(options) {
     this.state = options.state || '';
     this.priority = options.priority || '';
     this.preventClick = options.preventClick || false;
+    this.preventCheckHide = options.preventCheckHide || false;
     this.isChecked = options.isChecked || false;
 
     if (this.isAllDay) {
