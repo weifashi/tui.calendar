@@ -12765,6 +12765,8 @@ module.exports = function(baseController, layoutContainer, dragHandler, options,
         'time': util.isArray(scheduleView) ? util.inArray('time', scheduleView) >= 0 : scheduleView
     };
 
+   DEFAULT_PANELS = options.DEFAULT_PANELS || DEFAULT_PANELS;
+
     // Make panels by view sequence and visibilities
     util.forEach(DEFAULT_PANELS, function(panel) {
         var name = panel.name;
@@ -12785,7 +12787,7 @@ module.exports = function(baseController, layoutContainer, dragHandler, options,
         }
     });
 
-    if (vpanels.length) {
+    if (!options.DEFAULT_PANELS && vpanels.length) {
         lastVPanel = vpanels[vpanels.length - 1];
         lastVPanel.autoHeight = true;
         lastVPanel.maxHeight = null;
